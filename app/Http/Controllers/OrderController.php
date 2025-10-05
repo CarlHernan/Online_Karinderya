@@ -138,4 +138,59 @@ class OrderController extends Controller
 
         return view('admin.dashboard.orders', compact('orders', 'query'));
     }
+
+    /**
+     * Display customer orders
+     */
+    public function customerOrders(Request $request)
+    {
+        if (!auth()->check()) {
+            return view('orders', ['orders' => collect(), 'isGuest' => true]);
+        }
+
+        $status = $request->get('status', 'all');
+        
+        $query = Order::with(['orderItems.product'])
+            ->where('user_id', auth()->id())
+            ->orderByDesc('created_at');
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->get();
+
+        return view('orders', compact('orders', 'status'));
+    }
+
+    /**
+     * Add order items to cart (Buy Again functionality)
+     */
+    public function buyAgain(Order $order)
+    {
+        if (!auth()->check() || $order->user_id !== auth()->id()) {
+            return redirect()->route('orders')->with('error', 'Unauthorized access.');
+        }
+
+        $cart = session()->get('cart', []);
+        
+        foreach ($order->orderItems as $item) {
+            $productId = $item->product_id;
+            
+            if (isset($cart[$productId])) {
+                $cart[$productId]['quantity'] += $item->quantity;
+            } else {
+                $cart[$productId] = [
+                    'name' => $item->product->name,
+                    'price' => $item->product->price,
+                    'quantity' => $item->quantity,
+                    'image' => $item->product->image_path
+                ];
+            }
+        }
+        
+        session()->put('cart', $cart);
+        
+        return redirect()->route('cart.index')->with('success', 'Items added to cart successfully!');
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use App\Http\Controllers\OrderController;
 
 
 //Page controller v1 -perez
@@ -57,8 +58,9 @@ class PageController extends Controller
         return view('menu', compact('menu', 'categories', 'selectedCategory', 'search', 'minPrice', 'maxPrice'));
     }
 
-    public function orders()
+    public function orders(Request $request)
     {
-        return view('orders');
+        $orderController = new OrderController();
+        return $orderController->customerOrders($request);
     }
 }

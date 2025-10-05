@@ -33,6 +33,7 @@ Route::get('/menu', [PageController::class, 'menu'])->name('menu');
 // Product detail page (after listing route)
 Route::get('/menu/{product}', [ProductController::class, 'showPage'])->name('menu.show');
 Route::get('/orders', [PageController::class, 'orders'])->name('orders');
+Route::post('/orders/{order}/buy-again', [OrderController::class, 'buyAgain'])->name('orders.buy-again');
 
 // Public user profile management (web guard)
 Route::middleware('auth:web')->group(function () {
