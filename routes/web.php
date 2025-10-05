@@ -89,9 +89,12 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
         // Payment management routes
         Route::get('/payments', [PaymentController::class, 'index'])->name('admin.dashboard.payments');
         Route::get('/payments/stats', [PaymentController::class, 'getStats'])->name('admin.dashboard.payments.stats');
+        Route::get('/payments/search', [PaymentController::class, 'search'])->name('admin.dashboard.payments.search');
         Route::get('/payments/status/{status}', [PaymentController::class, 'getByStatus'])->name('admin.dashboard.payments.by-status');
         Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('admin.dashboard.payments.show');
+        Route::put('/payments/{payment}/status', [PaymentController::class, 'updateStatus'])->name('admin.dashboard.payments.status');
         Route::put('/payments/{payment}/update', [PaymentController::class, 'updateWithProof'])->name('admin.dashboard.payments.update');
+        Route::get('/payments/{payment}/download-proof', [PaymentController::class, 'downloadProof'])->name('admin.dashboard.payments.download-proof');
 
         // Customer management routes
         Route::get('/customers', [CustomerController::class, 'index'])->name('admin.dashboard.customers');
