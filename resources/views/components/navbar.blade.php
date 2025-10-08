@@ -29,10 +29,16 @@
 
 
     </div>
-
+    {{-- count items in the cart mga bai --}}
     <div class="flex items-center gap-2">
-        <a href="{{ route('cart.index') }}" aria-label="Go to cart" class="text-emerald-900 md:border-hidden border-r-1 border-gray-300 pr-1">
+        <a href="{{ route('cart.index') }}" aria-label="Go to cart" class="text-emerald-900 md:border-hidden border-r-1 border-gray-300 pr-1 relative">
             @include('components.icons.cart')
+            @php
+                $cartCount = collect(session('cart', []))->sum('quantity');
+            @endphp
+            @if($cartCount > 0)
+                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">{{ $cartCount }}</span>
+            @endif
         </a>
 
         @if(Auth::guard('web')->check())
