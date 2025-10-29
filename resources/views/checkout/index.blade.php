@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-poppins">
         <h1 class="text-3xl font-bold text-emerald-900 mb-6 font-merriweather">Checkout</h1>
 
-        @if(session('success'))
+        @if(session('placed_order_id'))
             <div id="orderSuccessModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
                     <div class="flex items-start justify-between">

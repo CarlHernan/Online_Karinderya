@@ -73,13 +73,22 @@
                                 <button id="qty-plus" class="px-4 py-2 text-gray-600 hover:text-green-900 font-bold" type="button">+</button>
                             </div>
 
-                            <button class="flex-1 bg-green-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-800 transition" type="button">
-                                Add To Cart
-                            </button>
+                            <form method="POST" action="{{ route('cart.add', $product) }}" onsubmit="syncQty(this)" class="flex-1">
+                                @csrf
+                                <input type="hidden" name="quantity" value="1">
+                                <button class="w-full bg-green-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-800 transition" type="submit">
+                                    Add To Cart
+                                </button>
+                            </form>
 
-                            <button class="bg-yellow-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition" type="button">
-                                Buy Now
-                            </button>
+                            <form method="POST" action="{{ route('cart.add', $product) }}" onsubmit="syncQty(this)" class="">
+                                @csrf
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="redirect" value="checkout">
+                                <button class="bg-yellow-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition" type="submit">
+                                    Buy Now
+                                </button>
+                            </form>
                         </div>
 
                         <div class="border-t pt-4">
@@ -191,5 +200,28 @@
             sizeStd?.addEventListener('click', () => selectSize('standard'));
             sizeLrg?.addEventListener('click', () => selectSize('large'));
         });
+
+        // Sync the visible qty input into hidden form inputs before submit
+        window.syncQty = function(form) {
+            const qty = document.getElementById('qty-input')?.value || '1';
+            const input = form.querySelector('input[name="quantity"]');
+            if (input) input.value = Math.max(1, parseInt(qty || '1', 10));
+        }
     </script>
+
+    @if(session('success'))
+        <div id="addToCartModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                <div class="flex items-start justify-between">
+                    <h3 class="text-xl font-semibold text-emerald-900">Success</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('addToCartModal').remove()">✕</button>
+                </div>
+                <p class="mt-2 text-gray-700">{{ session('success') }}</p>
+                <div class="mt-6 flex gap-3">
+                    <a href="{{ route('cart.index') }}" class="flex-1 text-center bg-green-900 hover:bg-green-800 text-white px-4 py-2 rounded transition-colors">Go to Cart</a>
+                    <a href="{{ route('checkout.index') }}" class="flex-1 text-center border border-green-900 text-green-900 px-4 py-2 rounded hover:bg-green-50 transition-colors">Checkout</a>
+                </div>
+            </div>
+        </div>
+    @endif
 </x-layout>

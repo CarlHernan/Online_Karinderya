@@ -49,6 +49,10 @@ class CartController extends Controller
 
         session(['cart' => $cart]);
 
+        if ($request->input('redirect') === 'checkout') {
+            return redirect()->route('checkout.index')->with('success', 'Added to cart. Proceed to checkout.');
+        }
+
         return back()->with('success', 'Added to cart.');
     }
 

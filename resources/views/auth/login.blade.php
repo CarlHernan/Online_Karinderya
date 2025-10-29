@@ -130,4 +130,4 @@
         el.classList.toggle('text-primary', isPwd);
     }
     </script>
-</x-guest-layout>
+\</x-guest-layout>
