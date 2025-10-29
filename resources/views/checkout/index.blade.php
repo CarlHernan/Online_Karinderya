@@ -3,6 +3,22 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-poppins">
         <h1 class="text-3xl font-bold text-emerald-900 mb-6 font-merriweather">Checkout</h1>
 
+        @if(session('success'))
+            <div id="orderSuccessModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                    <div class="flex items-start justify-between">
+                        <h3 class="text-xl font-semibold text-emerald-900">Order placed!</h3>
+                        <button type="button" class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('orderSuccessModal').remove()">✕</button>
+                    </div>
+                    <p class="mt-2 text-gray-700">{{ session('success') }}</p>
+                    <div class="mt-6 flex gap-3">
+                        <a href="{{ route('orders') }}" class="flex-1 text-center bg-green-900 hover:bg-green-800 text-white px-4 py-2 rounded transition-colors">View My Orders</a>
+                        <a href="{{ route('menu') }}" class="flex-1 text-center border border-green-900 text-green-900 px-4 py-2 rounded hover:bg-green-50 transition-colors">Back to Menu</a>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @if(session('error'))
             <div class="mb-4 p-3 rounded bg-red-100 text-red-800">{{ session('error') }}</div>
         @endif

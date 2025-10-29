@@ -60,6 +60,12 @@
                                     <div>
                                         <h3 class="text-lg font-semibold text-gray-900">Order #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</h3>
                                         <p class="text-sm text-gray-500">Placed on {{ $order->created_at->format('M d, Y h:i A') }}</p>
+                                        <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                                            <span class="px-2 py-0.5 rounded-full bg-gray-100">Payment: <span class="font-medium">{{ strtoupper($order->payment_method ?? 'N/A') }}</span></span>
+                                            @if(!empty($order->delivery_address))
+                                                <span class="px-2 py-0.5 rounded-full bg-gray-100">Address: <span class="font-medium">{{ \Illuminate\Support\Str::limit($order->delivery_address, 60) }}</span></span>
+                                            @endif
+                                        </div>
                                     </div>
                                     @php
                                         $statusColors = [
@@ -89,7 +95,10 @@
                                                     <h4 class="text-base font-semibold">{{ $item->product->dish_name ?? $item->product->name }}</h4>
                                                     <span class="text-base font-semibold">₱{{ number_format($item->price, 2) }}</span>
                                                 </div>
-                                                <p class="text-sm text-gray-600">Qty: {{ $item->quantity }}</p>
+                                                <div class="text-sm text-gray-600 flex justify-between">
+                                                    <span>Qty: {{ $item->quantity }}</span>
+                                                    <span class="tabular-nums">Line total: ₱{{ number_format($item->quantity * $item->price, 2) }}</span>
+                                                </div>
                                                 @if(!empty($item->notes))
                                                     <p class="text-xs text-gray-500 mt-1">{{ $item->notes }}</p>
                                                 @endif

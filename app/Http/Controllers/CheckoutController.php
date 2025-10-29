@@ -95,7 +95,11 @@ class CheckoutController extends Controller
             // Clear cart
             session()->forget('cart');
 
-            return redirect()->route('menu')->with('success', 'Order placed successfully!');
+            $orderNum = str_pad($order->id, 6, '0', STR_PAD_LEFT);
+            return redirect()
+                ->route('checkout.index')
+                ->with('success', "Order #{$orderNum} placed successfully!")
+                ->with('placed_order_id', $order->id);
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to place order: ' . $e->getMessage());
