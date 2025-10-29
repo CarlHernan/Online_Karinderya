@@ -31,6 +31,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'profile_picture',
     ];
 
     /**
@@ -76,5 +77,52 @@ class User extends Authenticatable
     public function cart(): HasOne
     {
         return $this->hasOne(Cart::class);
+    }
+
+    /**
+     * Get user initials for avatar fallback
+     */
+    public function getInitials(): string
+    {
+        $name = trim($this->name ?? '');
+        
+        if (empty($name)) {
+            return 'U';
+        }
+        
+        $words = explode(' ', $name);
+        
+        if (count($words) >= 2) {
+            return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+        }
+        
+        return strtoupper(substr($name, 0, 2));
+    }
+
+    /**
+     * Get profile picture URL or initials fallback
+     */
+    public function getProfilePictureUrl(): string
+    {
+        if ($this->profile_picture && !empty(trim($this->profile_picture))) {
+            return asset('storage/' . $this->profile_picture);
+        }
+        
+        return '';
+    }
+
+    /**
+     * Safely get profile picture URL with fallback
+     */
+    public function getSafeProfilePictureUrl(): string
+    {
+        if ($this->profile_picture && !empty(trim($this->profile_picture))) {
+            $path = trim($this->profile_picture);
+            if (!empty($path)) {
+                return asset('storage/' . $path);
+            }
+        }
+        
+        return '';
     }
 }

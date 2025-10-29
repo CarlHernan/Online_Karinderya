@@ -32,7 +32,20 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div>@auth {{ Auth::user()->name }} @else {{ __('Account') }} @endauth</div>
+                            @auth
+                                <div class="flex items-center space-x-2">
+                                    @if(Auth::user()->profile_picture && !empty(trim(Auth::user()->profile_picture)))
+                                        <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile" class="h-6 w-6 rounded-full object-cover">
+                                    @else
+                                        <div class="h-6 w-6 rounded-full bg-emerald-900 flex items-center justify-center">
+                                            <span class="text-white font-semibold text-xs">{{ Auth::user()->getInitials() }}</span>
+                                        </div>
+                                    @endif
+                                    <span>{{ Auth::user()->name }}</span>
+                                </div>
+                            @else
+                                <div>{{ __('Account') }}</div>
+                            @endauth
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -44,7 +57,7 @@
 
                     <x-slot name="content">
                         @auth
-                            <x-dropdown-link :href="route('profile.edit')">
+                            <x-dropdown-link :href="Auth::guard('admin')->check() ? route('profile.edit') : route('user.profile.edit')">
                                 {{ __('Profile') }}
                             </x-dropdown-link>
 
@@ -103,12 +116,23 @@
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             @auth
                 <div class="px-4">
-                    <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    <div class="flex items-center space-x-3">
+                        @if(Auth::user()->profile_picture && !empty(trim(Auth::user()->profile_picture)))
+                            <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile" class="h-10 w-10 rounded-full object-cover">
+                        @else
+                            <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                <span class="text-gray-600 font-semibold text-sm">{{ Auth::user()->getInitials() }}</span>
+                            </div>
+                        @endif
+                        <div>
+                            <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
+                            <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('profile.edit')" @click="open=false">
+                    <x-responsive-nav-link :href="Auth::guard('admin')->check() ? route('profile.edit') : route('user.profile.edit')" @click="open=false">
                         {{ __('Profile') }}
                     </x-responsive-nav-link>
 

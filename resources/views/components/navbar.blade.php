@@ -45,7 +45,13 @@
             <!-- User profile dropdown (web users) -->
             <div x-data="{ open: false }" class="relative hidden md:block">
                 <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-                    <img src="{{ Auth::user()->avatar ?? asset('assets/images/users/1.jpg') }}" alt="{{ Auth::user()->name ?? 'User' }}" class="w-8 h-8 rounded-full">
+                    @if(Auth::user()->profile_picture && !empty(trim(Auth::user()->profile_picture)))
+                        <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="{{ Auth::user()->name ?? 'User' }}" class="w-8 h-8 rounded-full object-cover">
+                    @else
+                        <div class="w-8 h-8 rounded-full bg-emerald-900 flex items-center justify-center">
+                            <span class="text-white font-semibold text-xs">{{ Auth::user()->getInitials() }}</span>
+                        </div>
+                    @endif
                     <span class="text-sm font-medium text-gray-700">{{ Auth::user()->name ?? 'User' }}</span>
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />

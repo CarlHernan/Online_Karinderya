@@ -5,6 +5,11 @@
 
 @section('content')
 <div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            ← Back to Dashboard
+        </a>
+    </div>
     <!-- Profile Information -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
         <div class="px-6 py-4 border-b border-gray-200">
@@ -12,6 +17,79 @@
             <p class="mt-1 text-sm text-gray-600">Update your account's profile information and email address.</p>
         </div>
         <div class="p-6">
+            <!-- Profile Picture Section -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+                <div class="flex items-center space-x-4">
+                    <!-- Current Profile Picture -->
+                    <div class="flex-shrink-0">
+                        <img id="current-profile-picture" 
+                             @if($user->profile_picture && !empty(trim($user->profile_picture)))
+                                 src="{{ asset('storage/' . $user->profile_picture) }}" 
+                             @else
+                                 style="display: none;"
+                             @endif
+                             alt="Profile Picture" 
+                             class="h-20 w-20 rounded-full object-cover border-2 border-gray-300">
+                        
+                        <div id="initials-placeholder" 
+                             @if($user->profile_picture && !empty(trim($user->profile_picture)))
+                                 style="display: none;"
+                             @endif
+                             class="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-300">
+                            <span class="text-gray-600 font-semibold text-lg">{{ $user->getInitials() }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Form -->
+                    <div class="flex-1">
+                        <form method="post" action="{{ request()->routeIs('user.profile.*') ? route('user.profile.picture.update') : route('profile.picture.update') }}" enctype="multipart/form-data" class="space-y-3">
+                            @csrf
+                            @method('patch')
+                            
+                            <div class="flex items-center space-x-3">
+                                <input type="file" name="profile_picture" id="profile_picture" 
+                                       accept="image/jpeg,image/png,image/gif,image/webp"
+                                       onchange="previewProfilePicture(this)"
+                                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                
+                                <button type="submit" 
+                                        class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    Upload
+                                </button>
+                            </div>
+                            
+                            @error('profile_picture')
+                                <p class="text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            
+                            @if($user->profile_picture)
+                                <div class="mt-2">
+                                    <button type="button" onclick="removeProfilePicture()" 
+                                            class="text-sm text-red-600 hover:text-red-800 underline">
+                                        Remove current picture
+                                    </button>
+                                </div>
+                            @endif
+                        </form>
+                        
+                        <!-- Remove Picture Form -->
+                        @if($user->profile_picture)
+                            <form method="post" action="{{ request()->routeIs('user.profile.*') ? route('user.profile.picture.remove') : route('profile.picture.remove') }}" id="remove-picture-form" class="hidden">
+                                @csrf
+                                @method('delete')
+                            </form>
+                        @endif
+                    </div>
+                </div>
+                
+                @if (session('status') === 'profile-picture-updated')
+                    <p class="mt-2 text-sm text-green-600">Profile picture updated successfully.</p>
+                @elseif (session('status') === 'profile-picture-removed')
+                    <p class="mt-2 text-sm text-green-600">Profile picture removed successfully.</p>
+                @endif
+            </div>
+
             <form method="post" action="{{ request()->routeIs('user.profile.*') ? route('user.profile.update') : route('profile.update') }}" class="space-y-6">
                 @csrf
                 @method('patch')
@@ -120,8 +198,8 @@
                     @endif
                 </div>
             </form>
-        </div>
-    </div>
+                </div>
+            </div>
 
     <!-- Delete Account -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -154,7 +232,7 @@
                     <button type="button" onclick="cancelDelete()" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
                         Cancel
                     </button>
-                </div>
+            </div>
             </form>
         </div>
     </div>
@@ -167,6 +245,30 @@ function confirmDelete() {
 
 function cancelDelete() {
     document.getElementById('delete-form').classList.add('hidden');
+}
+
+function removeProfilePicture() {
+    if (confirm('Are you sure you want to remove your profile picture?')) {
+        document.getElementById('remove-picture-form').submit();
+    }
+}
+
+function previewProfilePicture(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            // Hide initials placeholder
+            document.getElementById('initials-placeholder').style.display = 'none';
+            
+            // Show and update the image preview
+            const img = document.getElementById('current-profile-picture');
+            img.src = e.target.result;
+            img.style.display = 'block';
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 </script>
 @endsection

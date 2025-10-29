@@ -74,11 +74,16 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                        <span class="text-sm font-medium text-gray-700">
-                                            {{ strtoupper(substr($customer->name, 0, 2)) }}
-                                        </span>
-                                    </div>
+                                    @if($customer->profile_picture && !empty(trim($customer->profile_picture)))
+                                        <img src="{{ asset('storage/' . $customer->profile_picture) }}" alt="{{ $customer->name }}"
+                                             class="h-10 w-10 rounded-full object-cover">
+                                    @else
+                                        <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+                                            <span class="text-sm font-semibold text-white">
+                                                {{ method_exists($customer, 'getInitials') ? $customer->getInitials() : strtoupper(substr($customer->name ?? 'U', 0, 2)) }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900">{{ $customer->name }}</div>

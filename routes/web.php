@@ -40,6 +40,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('user.profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('user.profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('user.profile.destroy');
+    Route::patch('/profile/picture', [ProfileController::class, 'updatePicture'])->name('user.profile.picture.update');
+    Route::delete('/profile/picture', [ProfileController::class, 'removePicture'])->name('user.profile.picture.remove');
 
     // Checkout (must be authenticated user)
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
@@ -123,6 +125,8 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/profile/picture', [ProfileController::class, 'updatePicture'])->name('profile.picture.update');
+    Route::delete('/profile/picture', [ProfileController::class, 'removePicture'])->name('profile.picture.remove');
 });
 
 require __DIR__.'/auth.php';

@@ -22,6 +22,22 @@
             <h3 class="text-lg font-medium text-gray-900">Customer Information</h3>
         </div>
         <div class="p-6">
+            <div class="flex items-center mb-6">
+                @if($customer->profile_picture && !empty(trim($customer->profile_picture)))
+                    <img src="{{ asset('storage/' . $customer->profile_picture) }}" alt="{{ $customer->name }}"
+                         class="h-14 w-14 rounded-full object-cover">
+                @else
+                    <div class="h-14 w-14 rounded-full bg-blue-600 flex items-center justify-center">
+                        <span class="text-white font-semibold">
+                            {{ method_exists($customer, 'getInitials') ? $customer->getInitials() : strtoupper(substr($customer->name ?? 'U', 0, 2)) }}
+                        </span>
+                    </div>
+                @endif
+                <div class="ml-4">
+                    <div class="text-base font-semibold text-gray-900">{{ $customer->name }}</div>
+                    <div class="text-sm text-gray-600">{{ $customer->email }}</div>
+                </div>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Name</label>

@@ -55,7 +55,7 @@
             <div>
                 <h3 class="font-semibold mb-3 text-lg">Follow Us</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="hover:underline text-green-900">Facebook</a></li>
+                    <li><a href="https://www.facebook.com/justine.pajes.56" class="hover:underline text-green-900">Facebook</a></li>
                 </ul>
             </div>
         </div>
